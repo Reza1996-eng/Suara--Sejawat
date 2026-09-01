@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Keluh Kesah Sejawat Keperawatan NTB</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 15px; color: #2c3e50; line-height: 1.6; }
+        .container { max-width: 780px; margin: 0 auto; background: white; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #1a5276; text-align: center; margin-bottom: 5px; font-size: 24px; }
+        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 13px; font-weight: 500; }
+        .security-badge { background-color: #27ae60; color: white; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-bottom: 25px; font-size: 13px; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #34495e; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #d5dbdb; border-radius: 8px; box-sizing: border-box; font-size: 14px; background-color: #fcfcfc; }
+        input:focus, textarea:focus { border-color: #3498db; outline: none; }
+        .file-upload-wrapper { background-color: #f8f9f9; padding: 15px; border: 2px dashed #bdc3c7; border-radius: 8px; margin-top: 5px; text-align: center; }
+        .file-info { font-size: 12px; color: #7f8c8d; margin-top: 5px; }
+        #previewImg { max-width: 100%; max-height: 250px; margin-top: 15px; border-radius: 6px; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        button { background-color: #2980b9; color: white; border: none; padding: 14px; font-size: 15px; border-radius: 8px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button:hover { background-color: #2471a3; }
+        .result-section { display: none; margin-top: 30px; padding: 20px; background-color: #fcf8e3; border-top: 4px solid #f1c40f; border-radius: 8px; }
+        .law-box { background-color: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-top: 15px; border-radius: 4px; }
+        .law-title { font-weight: bold; color: #21618c; margin-bottom: 5px; font-size: 14px; }
+        .script-box { background-color: #f4f6f7; padding: 15px; border: 1px dashed #7f8c8d; border-radius: 6px; font-family: Courier, monospace; font-size: 13px; color: #333; white-space: pre-wrap; margin-top: 10px; position: relative; }
+        .copy-btn { background-color: #7f8c8d; color: white; padding: 4px 8px; font-size: 11px; border-radius: 4px; width: auto; display: inline-block; margin-top: 5px; float: right; }
+        .copy-btn:hover { background-color: #5d6d7e; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛡️ Advokasi Otomatis Sejawat v3.0</h1>
+    <p class="subtitle">Analisis Regulasi Jam Kerja, Gaji & Tunjangan ASN/Kontrak Pemprov NTB</p>
+    
+    <div class="security-badge">🔒 SISTEM AMAN: Seluruh analisis data finansial, berkas bukti, dan teks aduan diproses lokal dan rahasia di HP Anda.</div>
+
+    <form id="advokasiForm">
+        <!-- STATUS PEGAWAI -->
+        <label for="statusPegawai">1. Status Kepegawaian Anda:</label>
+        <select id="statusPegawai">
+            <option value="PNS">Pegawai Negeri Sipil (PNS)</option>
+            <option value="P3K">Pegawai Pemerintah dengan Perjanjian Kerja (PPPK / P3K)</option>
+            <option value="Kontrak">Tenaga Kontrak / Honorer / BLUD Non-ASN</option>
+        </select>
+
+        <!-- INPUT JAM KERJA -->
+        <label for="inputJam">2. Estimasi Total Jam Kerja Anda Bulan Ini (Jam):</label>
+        <input type="number" id="inputJam" placeholder="Contoh: 185" required>
+
+        <!-- INPUT TEKS KELUHAN -->
+        <label for="inputKasus">3. Ketik Masalah Anda (Sidang Etik / Intimidasi / Roster / Pemotongan Gaji / TPP / Masalah Insentif):</label>
+        <textarea id="inputKasus" rows="5" placeholder="Ceritakan masalah kedinasan atau finansial yang Anda hadapi secara riil tanpa menggunakan nama asli..." required></textarea>
+
+        <!-- INPUT UNGGAH BUKTI DOKUMEN/FOTO -->
+        <label>4. Unggah Bukti Roster Dinas / Slip Gaji / Dokumen Sidang (Opsional):</label>
+        <div class="file-upload-wrapper">
+            <input type="file" id="inputBukti" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="validasiDanPreviewFile()">
+            <div class="file-info">Format didukung: <strong>JPG, PNG, PDF, DOC, DOCX</strong> (Maksimal 5 MB)</div>
+            <center><img id="previewImg" alt="Pratinjau Bukti"></center>
+            <div id="fileStatus" style="margin-top: 10px; font-weight: bold; color: #27ae60; display: none;"></div>
+        </div>
+
+        <button type="button" onclick="prosesAdvokasiOtomatis()">Kirim & Analisis Hukum Otomatis</button>
+    </form>
+
+    <!-- AREA JAWABAN OTOMATIS -->
+    <div id="boxJawaban" class="result-section">
+        <h3 style="margin-top: 0; color: #7d6608; border-bottom: 2px solid #f1c40f; padding-bottom: 8px;">⚖️ Hasil Analisis & Perlindungan Hukum Instan</h3>
+        
+        <!-- Hasil Analisis Jam Kerja & Status Finansial -->
+        <div id="analisisJam"></div>
+
+        <!-- Ringkasan Hak Finansial Sesuai Kategori Kepegawaian -->
+        <div id="hakFinansialBox"></div>
+
+        <!-- Hasil Analisis Konten Deteksi Kasus -->
+        <div id="analisisKasus" style="margin-top: 20px;"></div>
+
+        <!-- Tombol Reset -->
+        <button style="background-color: #7f8c8d; margin-top: 30px;" onclick="resetForm()">Buka Aduan Baru</button>
+    </div>
+</div>
+
+<script>
+    function validasiDanPreviewFile() {
+        const fileInput = document.getElementById('inputBukti');
+        const previewImg = document.getElementById('previewImg');
+        const fileStatus = document.getElementById('fileStatus');
+        const file = fileInput.files;
+
+        if (!file) { previewImg.style.display = 'none'; fileStatus.style.display = 'none'; return; }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Ukuran file terlalu besar! Maksimal ukuran file adalah 5 MB.');
+            fileInput.value = ""; previewImg.style.display = 'none'; fileStatus.style.display = 'none'; return;
+        }
+
+        fileStatus.style.display = 'block';
+        fileStatus.innerHTML = `📎 File Terbaca: ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`;
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) { previewImg.src = e.target.result; previewImg.style.display = 'block'; };
+            reader.readAsDataURL(file);
+        } else { previewImg.style.display = 'none'; }
+    }
+
+    function prosesAdvokasiOtomatis() {
+        const status = document.getElementById('statusPegawai').value;
+        const jam = parseFloat(document.getElementById('inputJam').value);
+        const teks = document.getElementById('inputKasus').value.toLowerCase();
+        const fileInput = document.getElementById('inputBukti');
+        
+        if (!jam || !teks) { alert('Mohon isi kolom estimasi jam kerja dan detail masalah Anda.'); return; }
+
+        const boxJawaban = document.getElementById('boxJawaban');
+        const analisisJam = document.getElementById('analisisJam');
+        const hakFinansialBox = document.getElementById('hakFinansialBox');
+        const analisisKasus = document.getElementById('analisisKasus');
+
+        boxJawaban.style.display = 'block';
+        boxJawaban.scrollIntoView({ behavior: 'smooth' });
+
+        // 1. EVALUASI JAM KERJA & STRUKTUR FINANSIAL DAERAH
+        const batasPergub = 150; 
+        let lampiranStatus = fileInput.files ? `<br><span style="color:#2e4053; font-size:12px;">📁 <em>Bukti fisik berkas terlampir aman secara lokal.</em></span>` : "";
+
+        if (jam > batasPergub) {
+            const surplus = jam - batasPergub;
+            analisisJam.innerHTML = `
+                <div style="background-color: #fcedec; padding: 15px; border-left: 5px solid #e74c3c; border-radius: 4px;">
+                    <strong style="color: #c0392b;">⚠️ DETEKSI PELANGGARAN JAM KERJA (OVERTIME)</strong><br>
+                    Anda bekerja <strong>${jam} jam</strong> bulan ini (Surplus <strong>${surplus} jam</strong> dari batas wajib Pergub NTB No. 87/2022). Rumah sakit melanggar hak Anda jika tidak mengonversinya menjadi hari libur ekstra atau jaspel/lembur tunai. Tindakan memotong TPP/insentif bagi pegawai faskes yang telah melampaui jam dinas wajib secara struktural adalah tindakan <strong>maladministrasi keuangan</strong> daerah. ${lampiranStatus}
+                </div>
+            `;
+        } else {
+            analisisJam.innerHTML = `
+                <div style="background-color: #e8f8f5; padding: 15px; border-left: 5px solid #2ecc71; border-radius: 4px;">
+                    <strong style="color: #27ae60;">✅ STATUS JAM KERJA STANDAR</strong><br>
+                    Akumulasi kerja Anda (${jam} jam) berada di dalam batas koridor bulanan Pergub NTB No. 87/2022. ${lampiranStatus}
+                </div>
+            `;
+        }
+
+        // 2. RINGKASAN HAK FINANSIAL SESUAI STATUS (BERDASARKAN UNDANG-UNDANG DAN PERGUB)
+        if (status === "PNS") {
+            hakFinansialBox.innerHTML = `
+                <div class="law-box" style="border-left-color: #2980b9; background-color: #f4f9fc;">
+                    <div class="law-title" style="color: #1b4f72;">💰 Hak Finansial PNS (PP No. 5/2024 & Pergub NTB TPP)</div>
+                    • <strong>Gaji Pokok:</strong> Sesuai Golongan/Masa Kerja (PP 5/2024).<br>
+                    • <strong>Tunjangan Melekat:</strong> Keluarga (Suami/Istri 10%, Anak 2% maks 2 anak), Tunjangan Pangan (Beras), Tunjangan Jabatan Fungsional Perawat.<br>
