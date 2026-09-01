@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Keluh Kesah Sejawat Keperawatan NTB</title>
+    <title>Sistem Advokasi Sejawat Keperawatan NTB v3.0</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; padding: 15px; color: #2c3e50; line-height: 1.6; }
-        .container { max-width: 780px; margin: 0 auto; background: white; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .container { max-width: 750px; margin: 0 auto; background: white; padding: 25px; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
         h1 { color: #1a5276; text-align: center; margin-bottom: 5px; font-size: 24px; }
         p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 25px; font-size: 13px; font-weight: 500; }
         .security-badge { background-color: #27ae60; color: white; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-bottom: 25px; font-size: 13px; }
@@ -29,18 +29,18 @@
 <body>
 
 <div class="container">
-    <h1>🛡️ Advokasi Otomatis Sejawat v3.0</h1>
-    <p class="subtitle">Analisis Regulasi Jam Kerja, Gaji & Tunjangan ASN/Kontrak Pemprov NTB</p>
+    <h1>🛡️ Advokasi Otomatis Sejawat</h1>
+    <p class="subtitle">Analisis Hukum Eksklusif RSUD Mutiara Sukma & Faskes Provinsi NTB</p>
     
-    <div class="security-badge">🔒 SISTEM AMAN: Seluruh analisis data finansial, berkas bukti, dan teks aduan diproses lokal dan rahasia di HP Anda.</div>
+    <div class="security-badge">🔒 SISTEM AMAN: Keluhan & File Bukti Anda TIDAK DIKIRIM ke internet. Analisis berjalan lokal dan rahasia di HP Anda.</div>
 
     <form id="advokasiForm">
         <!-- STATUS PEGAWAI -->
         <label for="statusPegawai">1. Status Kepegawaian Anda:</label>
-        <select id="statusPegawai">
-            <option value="PNS">Pegawai Negeri Sipil (PNS)</option>
-            <option value="P3K">Pegawai Pemerintah dengan Perjanjian Kerja (PPPK / P3K)</option>
-            <option value="Kontrak">Tenaga Kontrak / Honorer / BLUD Non-ASN</option>
+        <select id="statusPegawai" required>
+            <option value="PNS">PNS (Pegawai Negeri Sipil)</option>
+            <option value="PPPK">PPPK (Pegawai Pemerintah dengan Perjanjian Kerja)</option>
+            <option value="Kontrak">Tenaga Kontrak / Honorer / BLUD</option>
         </select>
 
         <!-- INPUT JAM KERJA -->
@@ -48,15 +48,15 @@
         <input type="number" id="inputJam" placeholder="Contoh: 185" required>
 
         <!-- INPUT TEKS KELUHAN -->
-        <label for="inputKasus">3. Ketik Masalah Anda (Sidang Etik / Intimidasi / Roster / Pemotongan Gaji / TPP / Masalah Insentif):</label>
-        <textarea id="inputKasus" rows="5" placeholder="Ceritakan masalah kedinasan atau finansial yang Anda hadapi secara riil tanpa menggunakan nama asli..." required></textarea>
+        <label for="inputKasus">3. Ketik Masalah Kedinasan atau Keuangan Anda (Sidang Etik / Intimidasi / Roster Kerja / Pemotongan Jaspel / TPP):</label>
+        <textarea id="inputKasus" rows="6" placeholder="Ceritakan kronologi singkat masalah Anda di sini tanpa menyebutkan nama asli Anda..." required></textarea>
 
         <!-- INPUT UNGGAH BUKTI DOKUMEN/FOTO -->
         <label>4. Unggah Bukti Roster Dinas / Slip Gaji / Dokumen Sidang (Opsional):</label>
         <div class="file-upload-wrapper">
             <input type="file" id="inputBukti" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onchange="validasiDanPreviewFile()">
-            <div class="file-info">Format didukung: <strong>JPG, PNG, PDF, DOC, DOCX</strong> (Maksimal 5 MB)</div>
-            <center><img id="previewImg" alt="Pratinjau Bukti"></center>
+            <div class="file-info">Format yang didukung: <strong>JPG, PNG, PDF, DOC, DOCX</strong> (Maksimal Ukuran: 5 MB)</div>
+            <center><img id="previewImg" alt="Pratinjau Bukti Jadwal/Dokumen"></center>
             <div id="fileStatus" style="margin-top: 10px; font-weight: bold; color: #27ae60; display: none;"></div>
         </div>
 
@@ -67,11 +67,11 @@
     <div id="boxJawaban" class="result-section">
         <h3 style="margin-top: 0; color: #7d6608; border-bottom: 2px solid #f1c40f; padding-bottom: 8px;">⚖️ Hasil Analisis & Perlindungan Hukum Instan</h3>
         
-        <!-- Hasil Analisis Jam Kerja & Status Finansial -->
+        <!-- Hasil Analisis Jam Kerja -->
         <div id="analisisJam"></div>
 
-        <!-- Ringkasan Hak Finansial Sesuai Kategori Kepegawaian -->
-        <div id="hakFinansialBox"></div>
+        <!-- Hasil Analisis Hak Keuangan & Kesejahteraan -->
+        <div id="analisisKeuangan" style="margin-top: 20px;"></div>
 
         <!-- Hasil Analisis Konten Deteksi Kasus -->
         <div id="analisisKasus" style="margin-top: 20px;"></div>
@@ -88,11 +88,18 @@
         const fileStatus = document.getElementById('fileStatus');
         const file = fileInput.files;
 
-        if (!file) { previewImg.style.display = 'none'; fileStatus.style.display = 'none'; return; }
+        if (!file) {
+            previewImg.style.display = 'none';
+            fileStatus.style.display = 'none';
+            return;
+        }
 
         if (file.size > 5 * 1024 * 1024) {
             alert('Ukuran file terlalu besar! Maksimal ukuran file adalah 5 MB.');
-            fileInput.value = ""; previewImg.style.display = 'none'; fileStatus.style.display = 'none'; return;
+            fileInput.value = ""; 
+            previewImg.style.display = 'none';
+            fileStatus.style.display = 'none';
+            return;
         }
 
         fileStatus.style.display = 'block';
@@ -100,9 +107,14 @@
 
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = function(e) { previewImg.src = e.target.result; previewImg.style.display = 'block'; };
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+            };
             reader.readAsDataURL(file);
-        } else { previewImg.style.display = 'none'; }
+        } else {
+            previewImg.style.display = 'none';
+        }
     }
 
     function prosesAdvokasiOtomatis() {
@@ -111,41 +123,45 @@
         const teks = document.getElementById('inputKasus').value.toLowerCase();
         const fileInput = document.getElementById('inputBukti');
         
-        if (!jam || !teks) { alert('Mohon isi kolom estimasi jam kerja dan detail masalah Anda.'); return; }
+        if (!jam || !teks) {
+            alert('Mohon isi estimasi jam kerja dan detail masalah Anda terlebih dahulu.');
+            return;
+        }
 
         const boxJawaban = document.getElementById('boxJawaban');
         const analisisJam = document.getElementById('analisisJam');
-        const hakFinansialBox = document.getElementById('hakFinansialBox');
+        const analisisKeuangan = document.getElementById('analisisKeuangan');
         const analisisKasus = document.getElementById('analisisKasus');
 
         boxJawaban.style.display = 'block';
         boxJawaban.scrollIntoView({ behavior: 'smooth' });
 
-        // 1. EVALUASI JAM KERJA & STRUKTUR FINANSIAL DAERAH
+        // 1. EVALUASI JAM KERJA (BERDASARKAN PERGUB NTB 87/2022)
         const batasPergub = 150; 
-        let lampiranStatus = fileInput.files ? `<br><span style="color:#2e4053; font-size:12px;">📁 <em>Bukti fisik berkas terlampir aman secara lokal.</em></span>` : "";
+        let lampiranStatus = fileInput.files ? `<br><span style="color:#2e4053; font-size:12px;">📁 <em>Bukti dokumen fisik terbaca dalam sistem lokal.</em></span>` : "";
 
         if (jam > batasPergub) {
             const surplus = jam - batasPergub;
             analisisJam.innerHTML = `
                 <div style="background-color: #fcedec; padding: 15px; border-left: 5px solid #e74c3c; border-radius: 4px;">
                     <strong style="color: #c0392b;">⚠️ DETEKSI PELANGGARAN JAM KERJA (OVERTIME)</strong><br>
-                    Anda bekerja <strong>${jam} jam</strong> bulan ini (Surplus <strong>${surplus} jam</strong> dari batas wajib Pergub NTB No. 87/2022). Rumah sakit melanggar hak Anda jika tidak mengonversinya menjadi hari libur ekstra atau jaspel/lembur tunai. Tindakan memotong TPP/insentif bagi pegawai faskes yang telah melampaui jam dinas wajib secara struktural adalah tindakan <strong>maladministrasi keuangan</strong> daerah. ${lampiranStatus}
+                    Anda bekerja <strong>${jam} jam</strong> bulan ini (Surplus <strong>${surplus} jam</strong> dari batas aman wajib Pergub NTB). Aturan internal rumah sakit yang membatasi libur ekstra pada kuota kerja ini adalah <strong>cacat hukum</strong> karena bertentangan dengan peraturan kepala daerah yang lebih tinggi. ${lampiranStatus}
                 </div>
             `;
         } else {
             analisisJam.innerHTML = `
                 <div style="background-color: #e8f8f5; padding: 15px; border-left: 5px solid #2ecc71; border-radius: 4px;">
                     <strong style="color: #27ae60;">✅ STATUS JAM KERJA STANDAR</strong><br>
-                    Akumulasi kerja Anda (${jam} jam) berada di dalam batas koridor bulanan Pergub NTB No. 87/2022. ${lampiranStatus}
+                    Total jam kerja Anda (${jam} jam) secara akumulatif masih dalam koridor aman batas atas bulanan Pergub NTB No. 87/2022. ${lampiranStatus}
                 </div>
             `;
         }
 
-        // 2. RINGKASAN HAK FINANSIAL SESUAI STATUS (BERDASARKAN UNDANG-UNDANG DAN PERGUB)
-        if (status === "PNS") {
-            hakFinansialBox.innerHTML = `
-                <div class="law-box" style="border-left-color: #2980b9; background-color: #f4f9fc;">
-                    <div class="law-title" style="color: #1b4f72;">💰 Hak Finansial PNS (PP No. 5/2024 & Pergub NTB TPP)</div>
-                    • <strong>Gaji Pokok:</strong> Sesuai Golongan/Masa Kerja (PP 5/2024).<br>
-                    • <strong>Tunjangan Melekat:</strong> Keluarga (Suami/Istri 10%, Anak 2% maks 2 anak), Tunjangan Pangan (Beras), Tunjangan Jabatan Fungsional Perawat.<br>
+        // 2. MODUL JAWABAN OTOMATIS TUNJANGAN & GAJI SESUAI STATUS (UU ASN & UU CIPTA KERJA)
+        let keuanganHtml = "";
+        if (status === "PNS" || status === "PPPK") {
+            keuanganHtml = `
+                <div class="law-box" style="border-left-color: #2980b9; background-color: #f4f9fd;">
+                    <div class="law-title" style="color: #1b4f72;">💰 Regulasi Hak Keuangan & Tunjangan ASN (PNS/PPPK)</div>
+                    <p>Berdasarkan <strong>UU ASN No. 20 Tahun 2023 Pasal 21</strong>, PNS dan PPPK memiliki <strong>kesetaraan hak mutlak</strong> atas komponen kesejahteraan berikut:</p>
+                    <ul>
